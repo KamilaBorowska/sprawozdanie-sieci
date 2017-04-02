@@ -12,9 +12,12 @@
 
 % Wymagany jest wydruk z obu stron kartki!
 
-\documentclass[a4paper,11pt]{article}
+\documentclass{article}
+%\documentclass[a4paper,11pt]{article}
 
-\usepackage[T1]{polski}
+% polski to stary pakiet nie aktualizowany od dawna
+%%%%%%\usepackage[T1]{polski}
+\usepackage[polish]{babel}
 \usepackage[utf8]{inputenc}     % niepotrzebne gdy pierwsza linia pliku to "%& --translate-file=il2-pl"
 
 %\hoffset=-3.0cm                 % Mniejszy lewy margines
@@ -28,7 +31,7 @@
 %\setlength{\parskip}{\medskipamount}    % Space between paragraphs
 %\raggedbottom                           % bez rozciagania strony
 
-\title{Sprawozdanie z sieci}
+\title{Sprawozdanie z sieci -- ćwiczenie 0~i~1}
 \author{Konrad Borowski, Paweł Szczepanowski}
 
 \begin{document}
@@ -37,6 +40,10 @@
 \maketitle
 
 \section{Cel}
+
+Celem zadania była nauka podstawowych poleceń systemu Unix, nauka
+konfiguracji maszyn wirtualnych i~ich konfiguracja, obsługa systemu
+X Windows (przez tunel SSH), protokołów VNC i RDP.
 
 \section{Co robimy}
 
