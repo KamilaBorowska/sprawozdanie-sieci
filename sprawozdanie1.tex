@@ -37,13 +37,13 @@
 
 \maketitle
 
-\section{Cel}
+\section{Cel ćwiczenia}
 
-Celem zadania była nauka podstawowych poleceń systemu Unix, nauka
+Celem zadania była nauka podstawowych poleceń systemu Unix, metod autoryzacji, nauka
 konfiguracji maszyn wirtualnych i~ich konfiguracja, obsługa systemu
 X~Window System (przez tunel SSH), protokołów VNC i~RDP.
 
-\section{Realizacja}
+\section{Opis}
 
 \subsection{SSH}
 
@@ -52,15 +52,22 @@ jest on używany do obsługi linii poleceń, ale można korzystać też z~tego
 protokołu do przesyłania plików za pomocą \verb|scp| czy innych zastosowań,
 takich jak użycie protokołu ssh przez program \verb|git|.
 
-Kryptografia to skomplikowany temat, więc nie będzie on wyjaśniony w~pełni.
-Jednakże, w~dużym skrócie, protokoł SSH korzysta z~kryptografii asymetrycznej.
-Serwer SSH z~którym klient się łączy przedstawia swój klucz publiczny. Ten
-klucz powinien być już znany przez klienta w~celu zweryfikowania tożsamości,
-jeżeli ten klucz nagle się zmieni, to prawdopodobnie wystąpił atak (lub
+Protokół SSH korzysta z~kryptografii asymetrycznej.
+Serwer SSH z~którym klient nawiązuje połączenie, przedstawia swój klucz publiczny. Ten
+klucz powinien być uprzednio znany przez klienta w~celu zweryfikowania tożsamości. 
+Aby zminimalizować szansę podszycia się, klucz ten powinien zostać przekazany
+przez inne, bezpieczne medium.
+W wypadku nagłej zmiany klucza, istnieje duże prawdopodobieństwo ataku lub
 administrator serwera zapomniał o~robieniu kopii zapasowych i~stracił
-klucz prywatny serwera). Klucz ten też jest wykorzystywany przez klienta
+klucz prywatny serwera. Klucz ten też jest wykorzystywany przez klienta
 do szyfrowania wiadomości do serwera. Następnie, klient może przesłać swój
 klucz publiczny, tak aby serwer mógł zaszyfrować wiadomości do klienta.
+
+Kryptografia asymetryczna wraz z zapamiętaniem klucza publicznego zautoryzowanego 
+urządzenia poprawia bezpieczeństwo w systemie, gdyż uwagi wymaga głównie przesłanie 
+wygenerowanego klucza na serwer, z którym zostanie nawiązane połączenie. Metoda
+autoryzacji oparta na parze login i hasło jest podatna na ataki np. przy wykorzystaniu
+keyloggerów.
 
 Klucz publiczny nie musi istnieć po stronie klienta, może być wygenerowany
 dokładnie kiedy jest potrzebny na jedną sesję, ale jeżeli istnieje, może
@@ -76,8 +83,7 @@ serwer (komputer z~podłączonym monitorem) był odpowiedzialny za to.
 
 Ta funkcjonalność jest rzadko wykorzystawana dzisiaj. Zwykle serwer
 i~klienci są uruchomieni na tej samej maszynie, co jest jak najbardziej
-możliwe przy mocy obliczeniowych procesorów (i~karty graficznej). Nie
-mniej jednak, jest częścią laboratorium.
+możliwe przy mocy obliczeniowych procesorów (i~karty graficznej).
 
 \subsection{Virtual Network Computing}
 
@@ -90,9 +96,11 @@ chce pokazać innym swoją sesję graficzną.
 
 \subsection{Remote Desktop Protocol}
 
-Nie wiem jak to działa. Powiem więcej -- nie mam prawa wiedzieć jak to działa.
-Jest to opatentowany i~w~teorii tajny protokoł Microsoftu. Nie mniej jednak,
-protokoł jest podobny do VNC w~stopniu w~którym mogę z~niego korzystać.
+Sposób działania protokólu jest chroniony, gdyż 
+RDP to opatentowany i~w~teorii tajny protokoł Microsoftu. Nie mniej jednak,
+protokoł jest podobny do VNC w~takim stopniu, że obsługa
+jest stosunkowo prosta. Protokół wykorzystywany jest m.in. przez połączenia
+z pulpitem zdalnym w programie Remmina.
 
 \subsection{VirtualBox}
 
@@ -100,8 +108,11 @@ VirtualBox to maszyna wirtualna która pozwala na uruchamianie systemów
 operacyjnych kiedy system operacyjny jest włączony. Implementacja jest
 w~dużej części intuicyjna, jednakże włączenie sieciowego systemu operacyjnego
 w~sieci ZETIS wymaga włączenia mostkowania w~celu udostępnienia dostępu
-do sieci lokalnej zamiast korzystania z~systemu NAT i~włączenia
+do sieci lokalnej zamiast domyślnego korzystania z~systemu NAT i~włączenia
 własnościowych dodatków do VirtualBox.
+
+
+
 
 \section{Algorytm}
 
@@ -109,7 +120,9 @@ własnościowych dodatków do VirtualBox.
 
 \begin{itemize}
 
-\item Tworzenie pary kluczów prywatnego i~publicznego
+\item Tworzenie pary kluczy: prywatnego i~publicznego
+Polecenie \verb|ssh-keygen| zapisuje klucze w katalogu \verb|~/.ssh/|. Klucz publiczny znajduje się w pliku \verb|id_rsa.pub|, a prywatny w \verb|id_rsa|.
+
 
 \begin{verbatim}
 $ ssh-keygen 
@@ -179,10 +192,12 @@ $ ssh -Y szczepp3@volt.iem.pw.edu.pl
 volt% xcalc
 \end{verbatim}
 
+Programy w trybie graficznym uruchamiają się w sposób prawidłowy.
+
 \end{itemize}
 
 \subsection{X~Window System (bezpośredni protokoł X Window z~wykorzystaniem xauth)}
-
+Jest to podejście alternatywne do wykorzystanego uprzednio polecenia \verb|ssh -Y|.
 \begin{itemize}
 
 \item Wyświetlenie listy ciasteczek X~Window.
