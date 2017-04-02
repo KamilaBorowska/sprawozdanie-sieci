@@ -9,31 +9,31 @@
 
 % Wymagane jest umieszczenie źródeł sprawozdania (plik *.tex, źródła rysunków)
 % w ktalogu ~/labsk. Pliki tekstowe muszą byc w formacie pl_PL.UTF-8
+% (nie wiem jak plik tekstowy może być w formacie pl_PL, to jest locale,
+%  chyba chodziło po prostu o UTF-8?)
 
 % Wymagany jest wydruk z obu stron kartki!
-
-\documentclass{article}
-%\documentclass[a4paper,11pt]{article}
+\documentclass[a4paper,11pt]{article}
 
 \usepackage{polski}
 \usepackage[utf8]{inputenc}     % niepotrzebne gdy pierwsza linia pliku to "%& --translate-file=il2-pl"
 
-%\hoffset=-3.0cm                 % Mniejszy lewy margines
-%\textwidth=18cm                 % szerzej
-%\evensidemargin=0pt
+\hoffset=-3.0cm                 % Mniejszy lewy margines
+\textwidth=18cm                 % szerzej
+\evensidemargin=0pt
 
-%\voffset=-3cm                   % Mniejszy gorny margines
-%\textheight=27cm                % szerzej wzdluz
+\voffset=-3cm                   % Mniejszy gorny margines
+\textheight=27cm                % szerzej wzdluz
 
-%\setlength{\parindent}{0pt}             % No paragraph indentation
-%\setlength{\parskip}{\medskipamount}    % Space between paragraphs
-%\raggedbottom                           % bez rozciagania strony
+\setlength{\parindent}{0pt}             % No paragraph indentation
+\setlength{\parskip}{\medskipamount}    % Space between paragraphs
+\raggedbottom                           % bez rozciagania strony
 
-\title{Sprawozdanie z sieci -- ćwiczenie 0~i~1}
+\title{Sprawozdanie z sieci -- ćwiczenie 0~i~1\\Poniedziałek, 10:00}
 \author{Konrad Borowski\\Paweł Szczepanowski}
 
 \begin{document}
-%\thispagestyle{empty}                   % bez numeracji stron
+\thispagestyle{empty}                   % bez numeracji stron
 
 \maketitle
 
@@ -95,6 +95,63 @@ Jest to opatentowany i~w~teorii tajny protokoł Microsoftu. Nie mniej jednak,
 protokoł jest podobny do VNC w~stopniu w~którym mogę z~niego korzystać.
 
 \section{Algorytm}
+
+\subsection{SSH}
+
+\begin{itemize}
+
+\item Tworzenie pary kluczów prywatnego i~publicznego
+
+\begin{verbatim}
+$ ssh-keygen 
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/xfix/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/xfix/.ssh/id_rsa.
+Your public key has been saved in /home/xfix/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:Fg8i9p7DYA6SSU5Mc7DnYc+ccQHg7ncHDzZWsE22pPA xfix@orange
+The key's randomart image is:
++---[RSA 2048]----+
+| +.o.o.o +       |
+|o =   o X .      |
+| = =o..Eo+       |
+|+o=.=o+..+       |
+|+..oo=.*S .      |
+| ..+ +oo=        |
+|   ...=. o       |
+|    . ...        |
+|                 |
++----[SHA256]-----+
+\end{verbatim}
+
+\item Przesyłanie klucza publicznego na inny komputer. Polecenie
+\verb|ssh-copy-id| automatycznie zapisuje klucz publiczny
+w~\verb|~/.ssh/authorized_keys|, z~którego to serwer SSH odczytuje
+listę kluczy które mają dostęp bez podawania hasła (w~przypadku
+włączenia takiej funkcjonalności).
+
+\begin{verbatim}
+$ ssh-copy-id volt
+Password: 
+Now try logging into the machine, with "ssh 'volt'", and check in:
+
+  ~/.ssh/authorized_keys
+
+to make sure we haven't added extra keys that you weren't expecting.
+\end{verbatim}
+
+\item Logowanie w~celu sprawdzenia poprawności konfiguracji.
+
+\begin{verbatim}
+k2% ssh volt
+Last login: Sun Apr  2 21:14:43 2017 from vol
+...
+volt%
+\end{verbatim}
+
+\end{itemize}
 
 \section{Scenariusze}
 
