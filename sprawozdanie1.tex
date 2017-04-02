@@ -112,8 +112,6 @@ do sieci lokalnej zamiast domyślnego korzystania z~systemu NAT i~włączenia
 własnościowych dodatków do VirtualBox.
 
 
-
-
 \section{Algorytm}
 
 \subsection{SSH}
@@ -174,6 +172,15 @@ volt%
 \end{verbatim}
 
 \end{itemize}
+
+\subsection{VNC}
+
+
+Aby uzyskać obraz ekranu projektownego wykorzystano skrypt \verb|projektor| z opcją \verb|-c| (klient). 
+Alternatywnie można ustawić PORT na np. 5566 i użyć polecenia \verb|vncviewer k0:5566|.
+
+Aby projekcja była możliwa, potrzebne jest uruchomienia serwera usługi VNC: \verb|vncserver|, a dopiero następnie
+uruchomienie klienta: \verb|vncviewer|.
 
 \subsection{X~Window System (tunel ssh)}
 
