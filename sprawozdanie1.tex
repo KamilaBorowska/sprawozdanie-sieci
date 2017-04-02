@@ -153,6 +153,53 @@ volt%
 
 \end{itemize}
 
+\subsection{X~Window System (tunel ssh)}
+
+\begin{itemize}
+
+\item Logowanie SSH z~użyciem opcji \verb|-Y|, umożliwiającej przekierowanie X11
+    z~autoryzacją.
+
+\begin{verbatim}
+$ ssh -Y szczepp3@volt.iem.pw.edu.pl
+\end{verbatim}
+
+\item Uruchomienie programu, na przykład \verb|xcalc|.
+
+\begin{verbatim}
+volt% xcalc
+\end{verbatim}
+
+\end{itemize}
+
+\subsection{X~Window System (bezpośredni protokoł X Window z~wykorzystaniem xauth)}
+
+\begin{itemize}
+
+\item Wyświetlenie listy ciasteczek X~Window.
+
+\begin{verbatim}
+k5% xauth list
+k5/unix:0  MIT-MAGIC-COOKIE-1  b138356d5c3af2dc894fcb11dd0c5ca
+\end{verbatim}
+
+\item Udostępnienie klucza komputerowi na którym będzie uruchamiany klient X.
+      W~tym wypadku \verb|:0| to numer ekranu serwera X, a ciąg zaczynający
+      się od \verb|b138| jest kluczem wyświetlanym przez \verb|xauth list|.
+
+\begin{verbatim}
+volt% xauth add :0 . b138356d5c3af2dc894fcb11dd0c5ca
+\end{verbatim}
+
+\item Uruchomienie programu w~celu przetestowania konfiguracji.
+
+\begin{verbatim}
+volt% xcalc
+\end{verbatim}
+
+
+\end{itemize}
+
 \section{Scenariusze}
 
 \end{document}
