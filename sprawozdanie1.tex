@@ -15,9 +15,7 @@
 \documentclass{article}
 %\documentclass[a4paper,11pt]{article}
 
-% polski to stary pakiet nie aktualizowany od dawna
-%%%%%%\usepackage[T1]{polski}
-\usepackage[polish]{babel}
+\usepackage{polski}
 \usepackage[utf8]{inputenc}     % niepotrzebne gdy pierwsza linia pliku to "%& --translate-file=il2-pl"
 
 %\hoffset=-3.0cm                 % Mniejszy lewy margines
@@ -32,7 +30,7 @@
 %\raggedbottom                           % bez rozciagania strony
 
 \title{Sprawozdanie z sieci -- ćwiczenie 0~i~1}
-\author{Konrad Borowski, Paweł Szczepanowski}
+\author{Konrad Borowski\\Paweł Szczepanowski}
 
 \begin{document}
 %\thispagestyle{empty}                   % bez numeracji stron
@@ -43,9 +41,58 @@
 
 Celem zadania była nauka podstawowych poleceń systemu Unix, nauka
 konfiguracji maszyn wirtualnych i~ich konfiguracja, obsługa systemu
-X Windows (przez tunel SSH), protokołów VNC i RDP.
+X~Window System (przez tunel SSH), protokołów VNC i~RDP.
 
-\section{Co robimy}
+\section{Realizacja}
+
+\subsection{SSH}
+
+Protokoł SSH pozwala na połączenia zaszyfrowane z~innym komputerem. Zwykle
+jest on używany do obsługi linii poleceń, ale można korzystać też z~tego
+protokołu do przesyłania plików za pomocą \verb|scp| czy innych zastosowań,
+takich jak użycie protokołu ssh przez program \verb|git|.
+
+Kryptografia to skomplikowany temat, więc nie będzie on wyjaśniony w~pełni.
+Jednakże, w~dużym skrócie, protokoł SSH korzysta z~kryptografii asymetrycznej.
+Serwer SSH z~którym klient się łączy przedstawia swój klucz publiczny. Ten
+klucz powinien być już znany przez klienta w~celu zweryfikowania tożsamości,
+jeżeli ten klucz nagle się zmieni, to prawdopodobnie wystąpił atak (lub
+administrator serwera zapomniał o~robieniu kopii zapasowych i~stracił
+klucz prywatny serwera). Klucz ten też jest wykorzystywany przez klienta
+do szyfrowania wiadomości do serwera. Następnie, klient może przesłać swój
+klucz publiczny, tak aby serwer mógł zaszyfrować wiadomości do klienta.
+
+Klucz publiczny nie musi istnieć po stronie klienta, może być wygenerowany
+dokładnie kiedy jest potrzebny na jedną sesję, ale jeżeli istnieje, może
+być użyty przez serwer do rozpoznania użytkownika bez potrzeby logowania.
+
+\subsection{X Window System}
+
+Protokoł X~Window System jest protokołem który miał na celu umożliwienie
+korzystania z~aplikacji graficznych uruchomionych na innym komputerze.
+Pozwalało to na uruchomienie aplikacji (klienta) na jednym komputerze,
+bez obciążania tego komputera wyświetlaniem tej grafiki -- zamiast tego,
+serwer (komputer z~podłączonym monitorem) był odpowiedzialny za to.
+
+Ta funkcjonalność jest rzadko wykorzystawana dzisiaj. Zwykle serwer
+i~klienci są uruchomieni na tej samej maszynie, co jest jak najbardziej
+możliwe przy mocy obliczeniowych procesorów (i~karty graficznej). Nie
+mniej jednak, jest częścią laboratorium.
+
+\subsection{Virtual Network Computing}
+
+Protokoł ten jest protokołem przesyłania filmów na żywo z~możliwością
+przesyłania naciśniętych przycisków na klawiaturze i~ruchów myszki.
+Przesyłanie filmu zwykle jednak znaczy przesyłanie sesji graficznej.
+Można korzystać z~tego protokołu z~możliwością korzystania klawiatury
+i~myszki, lub bez niej, co jest przydatne gdy na przykład użytkownik
+chce pokazać innym swoją sesję graficzną.
+
+\subsection{Remote Desktop Protocol}
+
+Nie wiem jak to działa. Powiem więcej -- nie mam prawa wiedzieć jak to działa.
+Jest to opatentowany i~w~teorii tajny protokoł Microsoftu. Nie mniej jednak,
+protokoł jest podobny do VNC w~stopniu w~którym mogę z~niego korzystać.
 
 \section{Algorytm}
 
