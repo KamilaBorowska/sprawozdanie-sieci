@@ -1,0 +1,118 @@
+% -*- latex -*-
+% spr.tex
+
+% Wymagane pola:
+% - Imie Nazwisko
+% - grupa (dzin+godzina zaj.)
+% - Nazwa i numer cwiczenia)
+% - data
+
+% Wymagane jest umieszczenie źródeł sprawozdania (plik *.tex, źródła rysunków)
+% w ktalogu ~/labsk. Pliki tekstowe muszą byc w formacie pl_PL.UTF-8
+% (nie wiem jak plik tekstowy może być w formacie pl_PL, to jest locale,
+%  chyba chodziło po prostu o UTF-8?)
+
+% Wymagany jest wydruk z obu stron kartki!
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{polski}
+\usepackage[utf8]{inputenc}     % niepotrzebne gdy pierwsza linia pliku to "%& --translate-file=il2-pl"
+
+\hoffset=-3.0cm                 % Mniejszy lewy margines
+\textwidth=18cm                 % szerzej
+\evensidemargin=0pt
+
+\voffset=-3cm                   % Mniejszy gorny margines
+\textheight=27cm                % szerzej wzdluz
+
+\setlength{\parindent}{0pt}             % No paragraph indentation
+\setlength{\parskip}{\medskipamount}    % Space between paragraphs
+\raggedbottom                           % bez rozciagania strony
+
+\title{Sprawozdanie z sieci -- ćwiczenie 2\\Poniedziałek, 10:00}
+\author{Konrad Borowski\\Paweł Szczepanowski}
+
+\begin{document}
+\thispagestyle{empty}                   % bez numeracji stron
+
+\maketitle
+
+\section{Wstęp}
+
+Tworzenie sieci logicznej na podstawie logicznych aliasów można
+przeprowadzić za pomocą polecenia ifconfig. Pozwala to na połączenie
+dwóch interfejsów inną drogą.
+
+\section{Tworzenie sieci po stronie grml}
+
+\begin{verbatim}
+ifconfig enp0s3:1 10.20.30.15/24
+\end{verbatim}
+
+\section{Tworzenie sieci po stronie FreeBSD}
+
+\begin{verbatim}
+ifconfig em0 10.20.30.16 alias netmask 255.255.255.0
+\end{verbatim}
+
+Polecenia te tworzą sieci z maską podsieci 255.255.255.0, ustalaną przez
+argument \verb|netmask| na FreeBSD i~zakres sieci \verb|/24| w GRML.
+
+Następnie można sprawdzić działanie sieci.
+
+\section{Sprawdzenie działania po stronie grml}
+
+\begin{verbatim}
+root@malparkage ~ # ifconfig
+...
+
+enp0s3:1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.20.30.15  netmask 255.255.255.0  broadcast 10.20.30.255
+        ether 08:00:27:56:c4:ef  txqueuelen 1000  (Ethernet)
+
+...
+
+root@malparkage ~ # ping -c 4 10.20.30.16
+PING 10.20.30.16 (10.20.30.16) 56(84) bytes of data.
+64 bytes from 10.20.30.16: icmp_seq=1 ttl=64 time=0.506 ms
+64 bytes from 10.20.30.16: icmp_seq=2 ttl=64 time=0.460 ms
+64 bytes from 10.20.30.16: icmp_seq=3 ttl=64 time=0.514 ms
+64 bytes from 10.20.30.16: icmp_seq=4 ttl=64 time=0.587 ms
+
+--- 10.20.30.16 ping statiroot@:~ # traceroute 10.20.30.15
+traceroute to 10.20.30.15 (10.20.30.15), 64 hops max, 40 byte packets
+ 1  non-reg-LAN10 (10.20.30.15)  0.605 ms  0.486 ms  0.455 msstics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3010ms
+rtt min/avg/max/mdev = 0.460/0.516/0.587/0.053 ms
+\end{verbatim}
+
+\section{Sprawdzenie działania po stronie FreeBSD}
+
+\begin{verbatim}
+root@:~ # ifconfig
+em0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500
+	options=5059b<RXCSUM,TXCSUM,VLAN_MTU,VLAN_HWTAGGING,VLAN_HWCSUM,TSO4,LRO,VLAN_HWFILTER,VLAN_HWTSO>
+	ether 08:00:27:e7:06:f8
+	inet 10.146.50.139 netmask 0xffff0000 broadcast 10.146.255.255
+	inet 10.20.30.16 netmask 0xffffff00 broadcast 10.20.30.255 
+	nd6 options=29<PERFORMNUD,IFDISABLED,AUTO_LINKLOCAL>
+	media: Ethernet autoselect (1000baseT <full-duplex>)
+	status: active
+
+root@:~ # ping -c 4 10.20.30.15
+PING 10.20.30.15 (10.20.30.15): 56 data bytes
+64 bytes from 10.20.30.15: icmp_seq=0 ttl=64 time=0.223 ms
+64 bytes from 10.20.30.15: icmp_seq=1 ttl=64 time=0.585 ms
+64 bytes from 10.20.30.15: icmp_seq=2 ttl=64 time=0.539 ms
+64 bytes from 10.20.30.15: icmp_seq=3 ttl=64 time=0.547 ms
+
+--- 10.20.30.15 ping statistics ---
+4 packets transmitted, 4 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.223/0.474/0.585/0.146 ms
+
+root@:~ # traceroute 10.20.30.15
+traceroute to 10.20.30.15 (10.20.30.15), 64 hops max, 40 byte packets
+ 1  non-reg-LAN10 (10.20.30.15)  0.605 ms  0.486 ms  0.455 ms
+\end{verbatim}
+
+\end{document}
