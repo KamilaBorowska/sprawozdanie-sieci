@@ -16,6 +16,7 @@
 \documentclass[a4paper,11pt]{article}
 
 \usepackage{polski}
+\usepackage{hyperref}
 \usepackage[utf8]{inputenc}     % niepotrzebne gdy pierwsza linia pliku to "%& --translate-file=il2-pl"
 
 \hoffset=-3.0cm                 % Mniejszy lewy margines
@@ -41,6 +42,95 @@
 
 Celem ćwiczenia było połączenie do sieci Wi-Fi używając systemów
 operacyjnych Ubuntu i FreeBSD.
+
+\section{Połączenie Wi-Fi na systemie Ubuntu}
+
+System Ubuntu ma wbudowany NetworkManager, więc wykorzystano jego interfejs
+tekstowy w~celu unikniecia konfliktów z~nim. Przeszukiwanie sieci jest
+możliwe za pomocą polecenia \verb|nmcli d wifi list|.
+
+\begin{verbatim}
+szczepp3@k9 ~ % nmcli d wifi list
+*  SSID                  MODE   CHAN  RATE       SIGNAL  BARS  SECURITY    
+   lego                  Infra  6     54 Mbit/s  59      ***   --          
+   konferencja           Infra  1     54 Mbit/s  64      ***   WEP         
+   pwwifi-students       Infra  6     54 Mbit/s  39      **    --          
+   konferencja           Infra  6     54 Mbit/s  35      **    WEP         
+   pwwifi2               Infra  1     54 Mbit/s  50      **    WPA2 802.1X 
+   pwwifi                Infra  11    54 Mbit/s  49      **    --          
+   Huawei_msm8909_2500   Infra  6     54 Mbit/s  44      **    WPA2        
+   pwwifi                Infra  1     54 Mbit/s  47      **    --          
+   pwwifi2               Infra  11    54 Mbit/s  40      **    WPA2 802.1X 
+   ZETiIS                Infra  6     54 Mbit/s  100     ****  WPA2 802.1X 
+   TP-LINK_81E9CF        Infra  8     54 Mbit/s  52      **    WPA1 WPA2   
+   konferencja           Infra  11    54 Mbit/s  49      **    WEP         
+   pwwifi-students       Infra  11    54 Mbit/s  25      *     --          
+   konferencja           Infra  11    54 Mbit/s  39      **    WEP         
+   pwwifi-students       Infra  1     54 Mbit/s  50      **    --          
+   pwwifi                Infra  11    54 Mbit/s  37      **    --          
+   Airbox-E436           Infra  11    54 Mbit/s  67      ***   WPA2        
+   pwwifi2               Infra  11    54 Mbit/s  42      **    WPA2 802.1X 
+   Sieć Wi-Fi (WE-Lech)  Infra  1     54 Mbit/s  54      **    WPA2        
+   pwwifi2               Infra  1     54 Mbit/s  47      **    WPA2 802.1X 
+   pwwifi2               Infra  11    54 Mbit/s  44      **    WPA2 802.1X 
+   SKNET                 Infra  1     54 Mbit/s  37      **    WPA2        
+   --                    Infra  4     54 Mbit/s  29      *     WPA2        
+   pwwifi2               Infra  6     54 Mbit/s  29      *     WPA2 802.1X 
+   konferencja           Infra  1     54 Mbit/s  35      **    WEP         
+   konferencja           Infra  11    54 Mbit/s  35      **    WEP         
+   pwwifi                Infra  6     54 Mbit/s  42      **    --
+\end{verbatim}
+
+Możliwe jest połączenie do której z~dostępnych sieci za pomocą polecenia
+\verb|nmcli d wifi connect|. Nie jest konieczne korzystanie z~polecenia
+\verb|sudo|, wtedy wyświetla się komunikat w~interfejsie graficznym
+pytający o~hasło.
+
+\begin{verbatim}
+szczepp3@k9 ~ % sudo nmcli d wifi connect pwwifi-students
+Device 'wlp2s0' successfully activated with 'df271965-dd70-42c2-9704-04dd8104c250'.
+\end{verbatim}
+
+Aktywowanie już zapisanego połączenia jest też możliwe, używając polecenia
+\verb|nmcli c up|.
+
+\begin{verbatim}
+szczepp3@k9 ~ % sudo nmcli c up ZETiIS
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/3)
+\end{verbatim}
+
+\section{Połączenie Wi-Fi na systemie FreeBSD}
+
+Niestety ze względu na problemy z~trasownikiem nie udało się przeprowadzić
+tej procedury. Udało się połączyć z~trasownikiem i~włączyć sieć Wi-Fi
+(dzięki wykorzystaniu interfejsu sieciowego, znalezionego za pomocą
+polecenia \verb|nmap|), ale trasownik nie miał
+zainstalowanych odpowiednich sterowników. Nie mniej jednak, ogólny opis,
+na podstawie dokumentacji systemu FreeBSD wygląda tak.
+
+Modyfikując \verb|/etc/wpa_supplicant.conf| można wprowadzić parametry
+sieci z~którą chcemy się połączyć. \verb|myssid| w~tym wypadku to nazwa sieci,
+a~\verb|psk| to hasło do sieci.
+
+\begin{verbatim}
+network={
+    ssid="myssid"
+    psk="wpa2 psk"
+}
+\end{verbatim}
+
+Następnie można zmodyfikować plik konfiguracyjny systemu aby włączył sieć.
+\verb|ath0| to nazwa urządzenia sieciowego. Możliwe jest uzyskanie listy
+urządzeń za pomocą polecenia \verb|sysctl net.wlan.devices|
+(\verb/ifconfig | grep -B3 -i wireless/ w~starszych wersjach).
+
+\begin{verbatim}
+wlans_ath0="wlan0"
+ifconfig_wlan0="WPA SYNCDHCP"
+\end{verbatim}
+
+Aby aktywować te ustawienia bez restartowania komputera, można wykorzystać
+polecenie \verb|service netif restart|.
 
 \section{Trasowanie}
 
@@ -90,6 +180,73 @@ wywołują przekierowanie na formularz logowania na tym adresie.
 
 Po połączeniu się z~siecią Wi-Fi, system preferuje połączenie przewodowe
 (ponieważ jest szybsze, co jest prawdą, ale jednym z~ćwiczeń jest użycie
-połączenia Wi-Fi, a~nie przewodowego).
+połączenia Wi-Fi, a~nie przewodowego). Można sprawić aby system preferował
+użycie połączenia bezprezewodowego przez zwiększenie parametru \verb|metric|
+połączenia przewodowego.
+
+\begin{verbatim}
+k8% route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         vol.iem.pw.edu. 0.0.0.0         UG    0      0        0 eno2
+default         10.68.0.1       0.0.0.0         UG    600    0        0 wlp2s0
+1.1.1.1         10.68.0.1       255.255.255.255 UGH   600    0        0 wlp2s0
+10.68.0.0       *               255.255.0.0     U     600    0        0 wlp2s0
+10.146.0.0      *               255.255.0.0     U     0      0        0 eno2
+link-local      *               255.255.0.0     U     1000   0        0 wlp2s0
+k8% sudo route del default
+k8% sudo route add default gw vol.iem.pw.edu.pl metric 1024 dev eno2
+k8% route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         10.68.0.1       0.0.0.0         UG    600    0        0 wlp2s0
+default         vol.iem.pw.edu. 0.0.0.0         UG    1024   0        0 eno2
+1.1.1.1         10.68.0.1       255.255.255.255 UGH   600    0        0 wlp2s0
+10.68.0.0       *               255.255.0.0     U     600    0        0 wlp2s0
+10.146.0.0      *               255.255.0.0     U     0      0        0 eno2
+link-local      *               255.255.0.0     U     1000   0        0 wlp2s0
+\end{verbatim}
+
+Można sprawdzić czy to działa przez użycie polecenia \verb|traceroute|.
+
+\begin{verbatim}
+k8% traceroute 8.8.8.8
+traceroute to 8.8.8.8 (8.8.8.8), 64 hops max
+  1   10.68.0.1  40,031ms  12,796ms  12,284ms
+  2   194.29.130.1  9,849ms  3,052ms  4,128ms
+  3   194.29.132.164  3,447ms  9,803ms  12,595ms
+  4   148.81.253.69  9,619ms  7,026ms  19,742ms
+  5   212.191.224.73  8,026ms  9,459ms  8,575ms
+  6   72.14.203.178  19,367ms  10,345ms  15,127ms
+  7   66.249.95.15  19,892ms  9,572ms  235,889ms
+  8   216.239.57.240  41,992ms  27,009ms  27,207ms
+  9   66.249.95.226  48,669ms  *  30,558ms
+ 10   209.85.246.119  30,546ms  33,093ms  50,411ms
+ 11   *  *  *
+ 12   8.8.8.8  34,838ms  30,276ms  30,617ms
+\end{verbatim}
+
+Jak widać, połączenie przechodzi przez bramę domyślną (pod adresem \verb|10.68.0.1|)
+i~następują opóźnienia związane z~korzystaniem połączenia Wi-Fi. Na dodatek,
+próba korzystania z~przeglądarki internetowej przekierowuje na stronę logowania
+jeżeli użytkownik nie jest zalogowany.
+
+Mimo przeprowadzenia tej zmiany, nadal jest możliwość korzystania z~sieci wydzielonych
+na połączeniu przewodowym (\verb|10.146/16|).
+
+\section{Sieć peer-to-peer}
+
+Jest możliwe korzystanie z~interfejsu Wi-Fi w~trybie ad hoc. Ten tryb jest rzadko
+stosowany, jednakże jest dostępny. Możliwe jest korzystanie z~tego trybu przez
+wykorzystanie następujących poleceń. \verb|MySSID| jest nazwą sieci, a \verb|2422|
+jest częstotliwością (w~MHz) na której sieć jest uruchamiana. Lista dopasowań
+częstotliwości do kanałów jest dostępna na stronie
+\url{https://en.wikipedia.org/wiki/List_of_WLAN_channels}.
+
+\begin{verbatim}
+szczepp3@k9 ~ % sudo iw wlp2s0 set type ibss
+szczepp3@k9 ~ % sudo ip link set wlp2s0 up
+szczepp3@k9 ~ % sudo iw wlp2s0 ibss join MySSID 2422
+\end{verbatim}
 
 \end{document}
