@@ -1,0 +1,95 @@
+% -*- latex -*-
+% spr.tex
+
+% Wymagane pola:
+% - Imie Nazwisko
+% - grupa (dzin+godzina zaj.)
+% - Nazwa i numer cwiczenia)
+% - data
+
+% Wymagane jest umieszczenie źródeł sprawozdania (plik *.tex, źródła rysunków)
+% w ktalogu ~/labsk. Pliki tekstowe muszą byc w formacie pl_PL.UTF-8
+% (nie wiem jak plik tekstowy może być w formacie pl_PL, to jest locale,
+%  chyba chodziło po prostu o UTF-8?)
+
+% Wymagany jest wydruk z obu stron kartki!
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{polski}
+\usepackage[utf8]{inputenc}     % niepotrzebne gdy pierwsza linia pliku to "%& --translate-file=il2-pl"
+
+\hoffset=-3.0cm                 % Mniejszy lewy margines
+\textwidth=18cm                 % szerzej
+\evensidemargin=0pt
+
+\voffset=-3cm                   % Mniejszy gorny margines
+\textheight=27cm                % szerzej wzdluz
+
+\setlength{\parindent}{0pt}             % No paragraph indentation
+\setlength{\parskip}{\medskipamount}    % Space between paragraphs
+\raggedbottom                           % bez rozciagania strony
+
+\title{Sprawozdanie z sieci -- ćwiczenie 3\\Poniedziałek, 10:00}
+\author{Konrad Borowski\\Paweł Szczepanowski}
+
+\begin{document}
+\thispagestyle{empty}                   % bez numeracji stron
+
+\maketitle
+
+\section{Wstęp}
+
+Celem ćwiczenia było połączenie do sieci Wi-Fi używając systemów
+operacyjnych Ubuntu i FreeBSD.
+
+\section{Trasowanie}
+
+Po połączeniu się do sieci Wi-Fi, ustawiane są odpowiednie trasy
+przez urządzenie Wi-Fi. Dla przykładu dla sieci ZETiIS, wygląda
+ona tak. Urządzenie \verb|wlp2s0| jest urządzeniem Wi-Fi.
+
+\begin{verbatim}
+k8% netstat -rn
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         10.146.146.3    0.0.0.0         UG        0 0          0 eno2
+0.0.0.0         10.146.146.3    0.0.0.0         UG        0 0          0 wlp2s0
+10.146.0.0      0.0.0.0         255.255.0.0     U         0 0          0 eno2
+10.146.0.0      0.0.0.0         255.255.0.0     U         0 0          0 wlp2s0
+169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 wlp2s0
+\end{verbatim}
+
+Dostęp do internetu jest udostępnianiy przez trasę której
+\verb|Destination| to \verb|0.0.0.0|. Jest to trasa ogólna, używana
+kiedy żadna inna nie jest dostępna. Sieć ZETiIS też ustawia trasy
+\verb|10.146/16| i~\verb|169.254/16|, które umożliwiają dostęp do
+lokalnych komputerów w~sieci ZETiIS.
+
+Dla porównania, sieć pwwifi-students ma inną tablicę trasowania i~nie
+ma dostępu do tych samych co volt.
+
+\begin{verbatim}
+k8% netstat -rn
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         10.146.146.3    0.0.0.0         UG        0 0          0 eno2
+0.0.0.0         10.68.0.1       0.0.0.0         UG        0 0          0 wlp2s0
+1.1.1.1         10.68.0.1       255.255.255.255 UGH       0 0          0 wlp2s0
+10.68.0.0       0.0.0.0         255.255.0.0     U         0 0          0 wlp2s0
+10.146.0.0      0.0.0.0         255.255.0.0     U         0 0          0 eno2
+169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 wlp2s0
+\end{verbatim}
+
+Ciekawą właściwością sieci pwwifi-students jest istnienie trasy
+\verb|1.1.1.1|. Dopóki użytkownik się nie zaloguje, nie jest możliwe
+połączenie z~internetem (z~wyłączeniem serwera DNS), a~wszystkie
+próby połączenia z serwerami na porcie 80 (co ciekawe tylko port 80)
+wywołują przekierowanie na formularz logowania na tym adresie.
+
+\section{Używanie połączenia Wi-Fi pomimo posiadania połączenia przewodowego}
+
+Po połączeniu się z~siecią Wi-Fi, system preferuje połączenie przewodowe
+(ponieważ jest szybsze, co jest prawdą, ale jednym z~ćwiczeń jest użycie
+połączenia Wi-Fi, a~nie przewodowego).
+
+\end{document}
