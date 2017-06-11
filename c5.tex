@@ -76,4 +76,26 @@ System plików            rozm. użyte dost. %uż. zamont. na
 vol:/                     125G  114G  1,3G  99% /mnt
 \end{verbatim}
 
+\section{Serwer NFS w~systemie Arch Linux}
+
+Lista plików eksportowanych jest przechowywana w~pliku \verb|/etc/exports|.
+Dla przykładu jeżeli chcemy mieć folder \verb|/srv/nfs| dostępny dla lokalnej
+sieci 10.0.0.0 można zapisać następującą treść w~pliku \verb|/etc/exports|.
+
+\begin{verbatim}
+/srv/nfs       10.0.0.0/8(rw,fsid=root,no_subtree_check)
+\end{verbatim}
+
+A następnie uruchomić serwer.
+
+\begin{verbatim}
+sudo service nfs-server start
+\end{verbatim}
+
+Można sprawdzić widoczność używając następującego polecenia.
+
+\begin{verbatim}
+showmount -e localhost
+\end{verbatim}
+
 \end{document}
