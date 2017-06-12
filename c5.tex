@@ -198,9 +198,20 @@ Aby możliwe było montowanie zdalne, a nie w obrębie jednego komputera, należ
 
 
 
+\section{Serwer SMB}
 
+Można zainstalować go korzystając z~polecenia.
 
+\begin{verbatim}
+sudo pacman -S samba
+\end{verbatim}
 
+Jego domyślna konfiguracja jest umieszczona w~pliku \verb|/etc/samba/smb.conf.default|. Plik
+ten można skopiować do \verb|/etc/samba/smb.conf|, a~następnie edytować. Lista folderów
+i~drukarek współdzielonych jest dostępna w~sekcji \verb|Share Definitions|.
+
+O~ile system samba wykorzystuje system logowania Linux, wykorzystuje on oddzielną bazę haseł.
+Hasła można zmienić korzystając z~\verb|smbpasswd|.
 
 \end{document}
 
