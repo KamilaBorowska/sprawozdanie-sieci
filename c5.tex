@@ -44,6 +44,52 @@ Celem zadania było podłączenie serwisów plikowych i~stworzenie serwerów
 plików SMB, NFS i~iSCSI.
 
 NFS (Network File System) to protokół zdalnego udostępniania systemu plików. Port, który standardowo przydzielony jest do tej usługi to 2049.
+
+\section{Serwer NFS w~FreeBSD}
+
+Został zmodyfikowany plik \verb|/etc/exports|.
+
+\begin{verbatim}
+/ -ro 192.168.10.1
+\end{verbatim}
+
+Ta linia pozwala na dostęp do folderu root dla komputera 192.168.10.1.
+
+Następnie można uruchomić serwer.
+
+\begin{verbatim}
+root@:~ # service nfsd onestart 
+NFSv4 is disabled
+Starting rpcbind.
+Starting mountd.
+Starting nfsd.
+\end{verbatim}
+
+Można następnie używać tego katalogu na tym komputerze.
+
+\begin{verbatim}
+root@:~ # service nfsclient onestart
+NFS access cache time=60            
+root@:~ # mount 192.168.10.2:/ /mnt 
+\end{verbatim}
+
+Oraz zobaczyć jego zawartość.
+
+\begin{verbatim}
+root@:/mnt # ls               
+.11.1-PRERELEASE        mnt   
+.cshrc                  net   
+.profile                proc  
+COPYRIGHT               pub   
+bin                     rescue
+boot                    root  
+dev                     sbin  
+etc                     sys   
+lib                     tmp   
+libexec                 usr   
+media                   var   
+\end{verbatim}
+
 \section{Podłączanie zasobów NFS w~systemie Arch Linux}
 
 Najpierw trzeba zainstalować program obsługujący system plików NFS.
