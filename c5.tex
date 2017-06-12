@@ -37,13 +37,14 @@
 \thispagestyle{empty}                   % bez numeracji stron
 
 \maketitle
-
+\tableofcontent
 \section{Wstęp}
 
 Celem zadania było podłączenie serwisów plikowych i~stworzenie serwerów
 plików SMB, NFS i~iSCSI.
 
-\subsection{Podłączanie zasobów NFS w~systemie Arch Linux}
+NFS (Network File System) to protokół zdalnego udostępniania systemu plików. Port, który standardowo przydzielony jest do tej usługi to 2049.
+\section{Podłączanie zasobów NFS w~systemie Arch Linux}
 
 Najpierw trzeba zainstalować program obsługujący system plików NFS.
 
@@ -98,4 +99,109 @@ Można sprawdzić widoczność używając następującego polecenia.
 showmount -e localhost
 \end{verbatim}
 
+
+\section{Eksportowanie w środowisku FreeBSD}
+
+
+
+
+
+\subsection{Uruchomienie serwera NFS}
+Uruchomienie serwera polega na dodaniu do pliku \texttt{/etc/rc.conf} linii:
+
+\footnotesize\begin{verbatim}
+# Portmaper dla wiekszosci serwisow sieciowych (nis, nfs)
+rpcbind_enable=YES		       
+# NFS-serwer
+nfs_server_enable=YES	    
+nfsv4_server_enable=YES        
+mountd_enable=YES		        
+mountd_flags="-rl"		       
+\end{verbatim}\normalsize
+
+Teraz należy ustalić, które foldery mają zostać wyeksportowane. Konfigurujemy to w pliku \texttt{/etc/exports}. Dla naszego folderu należy dopisać:
+\footnotesize\begin{verbatim}
+#    scieżka        parametry    dozwolone maszyny
+/tmp/cw4nfs     -alldirs     localhost
+\end{verbatim}\normalsize
+Parametr '-alldirs' pozwala na montowanie podkatalogów. Inną użyteczną opcją jest '-ro', która ogranicza prawa użytkownika korzystającego z zasobów zdalnych do odczytu.
+
+
+Aby uruchomić serwer NFS należy wykonać jedno z poniższych:
+\begin{itemize}
+	\item \texttt{\# service nfsd start}
+	\item \texttt{\# nfsd -u -t -n 4}
+\end{itemize}
+
+
+Użyto polecenia:
+\footnotesize\begin{verbatim}
+% # service nfsd start
+Starting nfsuserd.
+Starting nfsd.
+\end{verbatim}\normalsize
+
+Po uruchomieniu usługi nfsd, należy uruchomić rpcbind oraz mountd.
+\footnotesize\begin{verbatim}
+% # service mountd start
+Starting mountd.
+\end{verbatim}\normalsize
+
+
+
+Po zmianie w pliku /etc/exports należy przeładować ustawienia poleceniem:\\ \texttt{\# service mountd onereload}.
+
+Za pomocą polecenia mount zweryfikowano, że folder został został prawidłowo wyeksportowany przez NFS:
+
+\footnotesize\begin{verbatim}
+% mount
+/dev/md6 on /tmp/cw4nfs (ufs, NFS exported, local)
+\end{verbatim}\normalsize
+
+
+\subsection{Uruchomienie klienta NFS}
+W celu konfiguracji klienta NFS wystarczy dopisać do pliku \texttt{/etc/rc.conf}:
+\footnotesize\begin{verbatim}
+nfs_client_enable=YES		# This host is an NFS client (or NO).
+\end{verbatim}\normalsize
+
+\subsection{Zamontowanie katalogu zdalnego}
+
+Usługi udostępniane przez komputer zdalny można pozyskać poleceniem \texttt{showmount}.
+\footnotesize\begin{verbatim}
+% # showmount -e localhost
+Exports list on localhost:
+/tmp/cw4nfs                    localhost 
+
+% # showmount -e volt
+ % showmount -e volt
+ Exports list on volt:
+ /tmp/obj                           Everyone
+ /home/stud                         ldap fed amp fre ubu len vxjac 
+ /                                  Everyone
+ /nfs                               lap 
+\end{verbatim}\normalsize
+
+
+Można utworzyć katalog i podpiąć zasób zdalny do utworzonego katalogu.
+
+\footnotesize\begin{verbatim}
+% mkdir /tmp/cw4nfs_client
+% # mount localhost:/tmp/cw4nfs /tmp/cw4nfs_client
+% mount
+/dev/md6 on /tmp/cw4nfs (ufs, NFS exported, local)
+localhost:/tmp/cw4nfs on /tmp/cw4nfs_client (nfs)
+\end{verbatim}\normalsize
+
+Aby możliwe było montowanie zdalne, a nie w obrębie jednego komputera, należy podać inny adres niż localhost.
+
+
+
+
+
+
+
+
 \end{document}
+
+
